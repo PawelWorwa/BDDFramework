@@ -12,7 +12,7 @@ public class GooglePage {
     
     static final private By byErrorField = By.name("qe");
     static final private By bySearchField = By.name("q");
-    static final private By byText = By.xpath("//a[contains(text(), 'Soflab Technology Profesjonalne Testy')]");
+    static final private By byText = By.xpath("//a[contains(text(), 'Easy Automation')]");
     
 	public GooglePage searchForResults(String searchCriteria) {
 		driver.findElement(bySearchField).click();
