@@ -2,22 +2,33 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>BddFramework</groupId>
+	<groupId>com.bdd.framework</groupId>
 	<artifactId>BddFramework</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>BddFramework</name>
-	<url>http://maven.apache.org</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 
-		<junit.version>4.12</junit.version>
-		<cucumber.version>1.2.5</cucumber.version>
-		<selenium.version>3.4.0</selenium.version>
+        <!-- dependencies version -->
+        <maven.surefire.version>2.20</maven.surefire.version>
+        <maven.exec.plugin.version>1.6.0</maven.exec.plugin.version>
+
+		<cucumber.version>2.2.0</cucumber.version>
+        <cucumber.gherkin.version>5.0.0</cucumber.gherkin.version>
+        <cucumber.reporting.version>3.10.0</cucumber.reporting.version>
+        <cucumber.jvm.parallel.version>4.2.0</cucumber.jvm.parallel.version>
+
+        <selenium.version>3.4.0</selenium.version>
+        <selenium.webDriverManager.version>1.7.1</selenium.webDriverManager.version>
+
+        <junit.version>4.12</junit.version>
+        <jackson.version>2.9.1</jackson.version>
+        <apache.log4j.version>2.10.0</apache.log4j.version>
 	</properties>
 
 	<dependencies>
@@ -28,27 +39,189 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>info.cukes</groupId>
+			<groupId>io.cucumber</groupId>
 			<artifactId>cucumber-java</artifactId>
 			<version>${cucumber.version}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>info.cukes</groupId>
-			<artifactId>cucumber-core</artifactId>
-			<version>${cucumber.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>info.cukes</groupId>
+			<groupId>io.cucumber</groupId>
 			<artifactId>cucumber-junit</artifactId>
 			<version>${cucumber.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>gherkin</artifactId>
+			<version>${cucumber.gherkin.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-core</artifactId>
+			<version>${cucumber.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
 			<version>${selenium.version}</version>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>${selenium.webDriverManager.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.masterthought</groupId>
+			<artifactId>maven-cucumber-reporting</artifactId>
+			<version>${cucumber.reporting.version}</version>
+		</dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${apache.log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${apache.log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${apache.log4j.version}</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <!-- set default values for parameters -->
+        <profile>
+            <id>setDefaultThreadsCount</id>
+            <activation>
+                <property>
+                    <name>!${threads}</name>
+                </property>
+            </activation>
+            <properties>
+                <threads>0</threads>
+            </properties>
+        </profile>
+        <profile>
+            <id>setDefaultBrowser</id>
+            <activation>
+                <property>
+                    <name>!${browser}</name>
+                </property>
+            </activation>
+            <properties>
+                <browser>CHROME</browser>
+            </properties>
+        </profile>
+        <profile>
+            <id>useSeleniumGrid</id>
+            <activation>
+                <property>
+                    <name>!${useGrid}</name>
+                </property>
+            </activation>
+            <properties>
+                <useGrid>false</useGrid>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>createReport</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>${maven.exec.plugin.version}</version>
+                        <configuration>
+                            <mainClass>com.bdd.framework.reporting.Report</mainClass>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+	<build>
+		<plugins>
+            <plugin>
+                <groupId>com.github.temyers</groupId>
+                <artifactId>cucumber-jvm-parallel-plugin</artifactId>
+                <version>${cucumber.jvm.parallel.version}</version>
+                <executions>
+                    <execution>
+                        <id>generateRunners</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>generateRunners</goal>
+                        </goals>
+                        <configuration>
+                            <glue>
+                                <package>com.bdd.framework.steps</package>
+                            </glue>
+                            <outputDirectory>${project.build.directory}/generated-test-sources/cucumber</outputDirectory>
+                            <featuresDirectory>src/test/resources/features</featuresDirectory>
+                            <plugins>
+                                <plugin>
+                                    <name>json</name>
+                                    <extension>json</extension>
+                                    <outputDirectory>${project.build.directory}/cucumber-parallel</outputDirectory>
+                                </plugin>
+                            </plugins>
+
+                            <strict>true</strict>
+                            <monochrome>true</monochrome>
+                            <useTestNG>false</useTestNG>
+                            <namingScheme>simple</namingScheme>
+                            <namingPattern>Parallel{c}IT</namingPattern>
+                            <parallelScheme>SCENARIO</parallelScheme>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.version}</version>
+                <configuration>
+                    <forkCount>${threads}</forkCount>
+                    <reuseForks>true</reuseForks>
+                    <includes>
+                        <include>**/Parallel*IT.class</include>
+                    </includes>
+                    <systemPropertyVariables>
+                        <maven.browser>${browser}</maven.browser>
+                        <maven.use.selenium.grid>${useGrid}</maven.use.selenium.grid>>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+		</plugins>
+	</build>
+
+    <description>
+        Parameters required for test execution:
+            - threads: (Optional) Number of threads(forks) on which test will be run in parallel. Default value is '0';
+            - browser: (Optional)Browser on which tests will be executed. Default value is 'CHROME'. Possible values:
+                - CHROME;
+                - FIREFOX;
+                - INTERNET_EXPLORER.
+            - useGrid: (Optional) Should Selenium Grid be used for test execution. Default value is 'false'.
+
+        Profiles:
+            - createReport - profile that generates cucumber report.
+
+        Example run command:
+            clean test -Dbrowser=CHROME -Dthreads=3 -DuseGrid=false exec:java -PcreateReport
+
+        Minimum run command:
+            clean test exec:java -PcreateReport
+    </description>
 </project>
