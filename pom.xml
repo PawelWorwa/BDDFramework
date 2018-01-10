@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>BddFramework</groupId>
+	<groupId>com.bdd.framework</groupId>
 	<artifactId>BddFramework</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -207,15 +207,21 @@
 	</build>
 
     <description>
-        - threads   0
-        - browser   CHROME FIREFOX INTERNET_EXPLORER
-        - useGrid   false
+        Parameters required for test execution:
+            - threads: (Optional) Number of threads(forks) on which test will be run in parallel. Default value is '0';
+            - browser: (Optional)Browser on which tests will be executed. Default value is 'CHROME'. Possible values:
+                - CHROME;
+                - FIREFOX;
+                - INTERNET_EXPLORER.
+            - useGrid: (Optional) Should Selenium Grid be used for test execution. Default value is 'false'.
 
-        exec:java -PcreateReport
+        Profiles:
+            - createReport - profile that generates cucumber report.
 
+        Example run command:
+            clean test -Dbrowser=CHROME -Dthreads=3 -DuseGrid=false exec:java -PcreateReport
 
-        clean test -Dbrowser=CHROME -Dthreads=3 -DuseGrid=false exec:java -PcreateReport
-
-        clean test exec:java -PcreateReport
+        Minimum run command:
+            clean test exec:java -PcreateReport
     </description>
 </project>

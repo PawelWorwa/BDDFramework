@@ -10,7 +10,7 @@ public class GooglePage {
         this.driver = driver;
     }
 
-    static final private By bySearchField = By.name("q");
+    private static final By bySearchField = By.name("q");
     
 	public GooglePage searchForResults(String searchCriteria) {
 		driver.findElement(bySearchField).click();

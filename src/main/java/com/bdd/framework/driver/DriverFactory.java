@@ -17,7 +17,7 @@ public class DriverFactory {
 
 	private static WebDriver driver = null;
 
-	public static WebDriver getDriver() throws UnsupportedBrowserException {
+	public static WebDriver getDriver() {
 	    boolean seleniumGrid = Boolean.parseBoolean(
 	            System.getProperty("maven.use.selenium.grid"));
 
