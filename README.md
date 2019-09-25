@@ -1,4 +1,7 @@
 # BDD Simple Selenium Framework
+## Warning ##
+Project is outdated(deprecated) and should be treated only as inspiration
+
 ## Basic information
 It's a simple test framework created for Selenium with BDD library: Cucumber. It uses **page object** approach separating steps from their physical implementation.
 
